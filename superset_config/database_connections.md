@@ -24,14 +24,24 @@
 # SQLAlchemy URI Format:
 # snowflake://<username>:<password>@<account>/<database>/<schema>?warehouse=<warehouse>&role=<role>
 
-# Example:
-# snowflake://your_user:your_password@your_account.snowflakecomputing.com/WEATHER_DB/PUBLIC?warehouse=COMPUTE_WH&role=ACCOUNTADMIN
+# YOUR ACTUAL CONNECTION:
+snowflake://AKARAGKIOZAKIS:Akaragkiozakis123@MPXFEBG-AP40156.snowflakecomputing.com/WEATHER_DWH/GOLD_LAYER?warehouse=COMPUTE_WH&role=ACCOUNTADMIN
+
+# Connection Details:
+# Server: MPXFEBG-AP40156.snowflakecomputing.com
+# Warehouse: COMPUTE_WH
+# Database: WEATHER_DWH
+# Schema: GOLD_LAYER
+# Role: ACCOUNTADMIN
+# Username: AKARAGKIOZAKIS
+# Password: Akaragkiozakis123
 
 # Steps to connect:
-# 1. Snowflake account details (account, username, password)
-# 2. Database, Schema, Warehouse, Role names
-# 3. Στο Superset: Data > Databases > + DATABASE  
-# 4. Choose "Snowflake" και βάλε το URI
+# 1. Στο Superset: Data > Databases > + DATABASE  
+# 2. Choose "Snowflake" 
+# 3. Copy-paste το παραπάνω URI στο "SQLAlchemy URI" field
+# 4. Click "Test Connection" για έλεγχο
+# 5. Save
 
 # =================
 # LOCAL POSTGRESQL (για testing)
