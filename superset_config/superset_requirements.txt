@@ -1,0 +1,20 @@
+# Superset Additional Database Drivers
+# Εγκατάσταση: pip install -r superset_requirements.txt
+
+# Snowflake support
+snowflake-sqlalchemy==1.4.7
+snowflake-connector-python==3.3.1
+
+# Databricks support
+databricks-sql-connector==2.8.0
+sqlalchemy-databricks==0.2.0
+
+# PostgreSQL (ήδη υπάρχει στο base image)
+psycopg2-binary==2.9.7
+
+# MySQL support (optional)
+mysqlclient==2.2.0
+
+# Additional utilities
+pandas==2.0.3
+numpy==1.24.3
