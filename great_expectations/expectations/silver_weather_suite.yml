@@ -1,0 +1,104 @@
+expectation_suite_name: silver_weather_expectations
+meta:
+  great_expectations_version: 0.15.0
+
+expectations:
+  - expectation_type: expect_table_to_exist
+    meta:
+      notes: "Silver weather table must exist"
+
+  - expectation_type: expect_table_row_count_to_be_between
+    kwargs:
+      min_value: 1
+      max_value: 5000000
+    meta:
+      notes: "Transformed weather data should have more rows after exploding daily arrays"
+
+  # Required columns after transformation
+  - expectation_type: expect_column_to_exist
+    kwargs:
+      column: "date"
+  - expectation_type: expect_column_to_exist
+    kwargs:
+      column: "temperature_max"
+  - expectation_type: expect_column_to_exist
+    kwargs:
+      column: "temperature_min"
+  - expectation_type: expect_column_to_exist
+    kwargs:
+      column: "precipitation_sum"
+  - expectation_type: expect_column_to_exist
+    kwargs:
+      column: "snowfall_sum"
+  - expectation_type: expect_column_to_exist
+    kwargs:
+      column: "wind_speed_max"
+  - expectation_type: expect_column_to_exist
+    kwargs:
+      column: "latitude"
+  - expectation_type: expect_column_to_exist
+    kwargs:
+      column: "longitude"
+
+  # Data type validations
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs:
+      column: "date"
+    meta:
+      notes: "Date is required"
+
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs:
+      column: "latitude"
+    meta:
+      notes: "Latitude is required"
+
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs:
+      column: "longitude"
+    meta:
+      notes: "Longitude is required"
+
+  # Temperature range checks for Greece
+  - expectation_type: expect_column_values_to_be_between
+    kwargs:
+      column: "temperature_max"
+      min_value: -50
+      max_value: 60
+    meta:
+      notes: "Temperature should be in realistic range for Greece"
+
+  - expectation_type: expect_column_values_to_be_between
+    kwargs:
+      column: "temperature_min"
+      min_value: -50
+      max_value: 60
+    meta:
+      notes: "Temperature should be in realistic range for Greece"
+
+  # Logic check: max >= min temperature
+  - expectation_type: expect_column_pair_values_A_to_be_greater_than_B
+    kwargs:
+      column_A: "temperature_max"
+      column_B: "temperature_min"
+      or_equal: true
+    meta:
+      notes: "Max temperature should be >= min temperature"
+
+  # Precipitation should be non-negative
+  - expectation_type: expect_column_values_to_be_between
+    kwargs:
+      column: "precipitation_sum"
+      min_value: 0
+      max_value: 1000
+    meta:
+      notes: "Precipitation should be non-negative and within reasonable range"
+
+  # Wind speed should be non-negative
+  - expectation_type: expect_column_values_to_be_between
+    kwargs:
+      column: "wind_speed_max"
+      min_value: 0
+      max_value: 200
+    meta:
+      notes: "Wind speed should be non-negative and within reasonable range"

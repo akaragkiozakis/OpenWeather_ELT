@@ -1,0 +1,34 @@
+name: bronze_data_checkpoint
+config_version: 1.0
+
+class_name: SimpleCheckpoint
+
+validations:
+  - batch_request:
+      datasource_name: databricks_weather_data
+      data_connector_name: default_runtime_data_connector
+      data_asset_name: bronze_weather_data
+    expectation_suite_name: bronze_weather_expectations
+
+  - batch_request:
+      datasource_name: databricks_weather_data
+      data_connector_name: default_runtime_data_connector
+      data_asset_name: bronze_mobility_data
+    expectation_suite_name: bronze_mobility_expectations
+
+action_list:
+  - name: store_validation_result
+    action:
+      class_name: StoreValidationResultAction
+  - name: update_data_docs
+    action:
+      class_name: UpdateDataDocsAction
+
+# Evaluation parameters (optional)
+evaluation_parameters: {}
+
+# Runtime configuration
+runtime_configuration: {}
+
+# Expectation suite validation configs
+expectation_suite_validation_result_limit: 100

@@ -1,0 +1,58 @@
+expectation_suite_name: bronze_mobility_expectations
+meta:
+  great_expectations_version: 0.15.0
+
+expectations:
+  - expectation_type: expect_table_to_exist
+    meta:
+      notes: "Bronze mobility table must exist"
+
+  - expectation_type: expect_table_row_count_to_be_between
+    kwargs:
+      min_value: 1
+      max_value: 10000000
+    meta:
+      notes: "Mobility data should have reasonable number of rows"
+
+  - expectation_type: expect_column_to_exist
+    kwargs:
+      column: "date"
+  - expectation_type: expect_column_to_exist
+    kwargs:
+      column: "sub_region_1"
+  - expectation_type: expect_column_to_exist
+    kwargs:
+      column: "workplaces_percent_change_from_baseline"
+  - expectation_type: expect_column_to_exist
+    kwargs:
+      column: "transit_stations_percent_change_from_baseline"
+  - expectation_type: expect_column_to_exist
+    kwargs:
+      column: "parks_percent_change_from_baseline"
+  - expectation_type: expect_column_to_exist
+    kwargs:
+      column: "source"
+  - expectation_type: expect_column_to_exist
+    kwargs:
+      column: "ingestion_time"
+
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs:
+      column: "date"
+    meta:
+      notes: "Date is required"
+
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs:
+      column: "sub_region_1"
+    meta:
+      notes: "Sub region is required for joins"
+
+  # Percentage change values should be within reasonable range
+  - expectation_type: expect_column_values_to_be_between
+    kwargs:
+      column: "workplaces_percent_change_from_baseline"
+      min_value: -100
+      max_value: 500
+    meta:
+      notes: "Workplace changes should be within reasonable range"

@@ -1,0 +1,19 @@
+# Data Processing and ETL
+pyspark==3.4.0
+pandas==2.0.3
+requests==2.31.0
+
+# Data Quality and Testing  
+great-expectations==0.15.50
+pytest==7.4.0
+
+# Database Connectors
+snowflake-connector-python==3.0.4
+snowflake-sqlalchemy==1.4.7
+
+# Visualization and Reporting
+apache-superset==3.1.0
+
+# Development and Utilities
+python-dotenv==1.0.0
+pytz==2023.3

@@ -1,0 +1,80 @@
+expectation_suite_name: silver_mobility_expectations
+meta:
+  great_expectations_version: 0.15.0
+
+expectations:
+  - expectation_type: expect_table_to_exist
+    meta:
+      notes: "Silver mobility table must exist"
+
+  - expectation_type: expect_table_row_count_to_be_between
+    kwargs:
+      min_value: 1
+      max_value: 10000000
+    meta:
+      notes: "Cleaned mobility data should have reasonable number of rows"
+
+  # Required columns after cleaning
+  - expectation_type: expect_column_to_exist
+    kwargs:
+      column: "date"
+  - expectation_type: expect_column_to_exist
+    kwargs:
+      column: "sub_region_1"
+  - expectation_type: expect_column_to_exist
+    kwargs:
+      column: "workplaces_percent_change_from_baseline"
+  - expectation_type: expect_column_to_exist
+    kwargs:
+      column: "transit_stations_percent_change_from_baseline"
+  - expectation_type: expect_column_to_exist
+    kwargs:
+      column: "parks_percent_change_from_baseline"
+  - expectation_type: expect_column_to_exist
+    kwargs:
+      column: "residential_percent_change_from_baseline"
+
+  # Data quality after cleaning
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs:
+      column: "date"
+    meta:
+      notes: "Date is required after cleaning"
+
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs:
+      column: "sub_region_1"
+    meta:
+      notes: "Sub region should not be null after cleaning"
+
+  # Percentage change values should be within reasonable range
+  - expectation_type: expect_column_values_to_be_between
+    kwargs:
+      column: "workplaces_percent_change_from_baseline"
+      min_value: -100
+      max_value: 500
+    meta:
+      notes: "Workplace changes should be within reasonable range"
+
+  - expectation_type: expect_column_values_to_be_between
+    kwargs:
+      column: "transit_stations_percent_change_from_baseline"
+      min_value: -100
+      max_value: 500
+    meta:
+      notes: "Transit changes should be within reasonable range"
+
+  - expectation_type: expect_column_values_to_be_between
+    kwargs:
+      column: "parks_percent_change_from_baseline"
+      min_value: -100
+      max_value: 1000
+    meta:
+      notes: "Parks changes should be within reasonable range (can be higher during lockdowns)"
+
+  # Check that dropped columns are actually dropped
+  - expectation_type: expect_table_columns_to_match_set
+    kwargs:
+      column_set: ["date", "country_region_code", "country_region", "sub_region_1", "place_id", "retail_and_recreation_percent_change_from_baseline", "grocery_and_pharmacy_percent_change_from_baseline", "parks_percent_change_from_baseline", "transit_stations_percent_change_from_baseline", "workplaces_percent_change_from_baseline", "residential_percent_change_from_baseline", "source", "file_type", "ingestion_time"]
+    meta:
+      notes: "Should not contain dropped columns like sub_region_2, metro_area, etc."

@@ -1,0 +1,63 @@
+expectation_suite_name: bronze_weather_expectations
+meta:
+  great_expectations_version: 0.15.0
+
+expectations:
+  # Table existence and basic structure
+  - expectation_type: expect_table_to_exist
+    meta:
+      notes: "Bronze weather table must exist"
+
+  # Row count validation
+  - expectation_type: expect_table_row_count_to_be_between
+    kwargs:
+      min_value: 1
+      max_value: 1000000
+    meta:
+      notes: "Weather data should have reasonable number of rows"
+
+  # Required columns exist
+  - expectation_type: expect_column_to_exist
+    kwargs:
+      column: "latitude"
+  - expectation_type: expect_column_to_exist
+    kwargs:
+      column: "longitude"
+  - expectation_type: expect_column_to_exist
+    kwargs:
+      column: "daily"
+  - expectation_type: expect_column_to_exist
+    kwargs:
+      column: "source"
+  - expectation_type: expect_column_to_exist
+    kwargs:
+      column: "ingestion_time"
+
+  # Data quality checks
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs:
+      column: "latitude"
+    meta:
+      notes: "Latitude is required"
+
+  - expectation_type: expect_column_values_to_not_be_null
+    kwargs:
+      column: "longitude"
+    meta:
+      notes: "Longitude is required"
+
+  - expectation_type: expect_column_values_to_be_between
+    kwargs:
+      column: "latitude"
+      min_value: -90
+      max_value: 90
+    meta:
+      notes: "Latitude must be valid geographic coordinate"
+
+  - expectation_type: expect_column_values_to_be_between
+    kwargs:
+      column: "longitude"
+      min_value: -180
+      max_value: 180
+    meta:
+      notes: "Longitude must be valid geographic coordinate"
