@@ -1,5 +1,6 @@
 from datetime import datetime
 
+
 def clean_weather_data(weather_data, city_name="Athens"):
     """Καθαρίζει και αναδιαμορφώνει το raw weather JSON σε structured μορφή."""
 
@@ -11,7 +12,7 @@ def clean_weather_data(weather_data, city_name="Athens"):
         "timezone": weather_data.get("timezone"),
         "start_date": weather_data.get("start_date", "unknown"),
         "end_date": weather_data.get("end_date", "unknown"),
-        "retrieved_at": datetime.utcnow().isoformat() + "Z"
+        "retrieved_at": datetime.utcnow().isoformat() + "Z",
     }
 
     # manipulation of hourly data
@@ -19,7 +20,6 @@ def clean_weather_data(weather_data, city_name="Athens"):
     times = hourly.get("time", [])
     variable_names = [k for k in hourly.keys() if k != "time"]
 
-    
     records = []
     for i, t in enumerate(times):
         record = {"time": t}
@@ -30,9 +30,6 @@ def clean_weather_data(weather_data, city_name="Athens"):
         records.append(record)
 
     # final structure
-    clean_json = {
-        "metadata": metadata,
-        "data": records
-    }
+    clean_json = {"metadata": metadata, "data": records}
 
     return clean_json

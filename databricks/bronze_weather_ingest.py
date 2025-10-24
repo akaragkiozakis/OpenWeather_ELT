@@ -1,15 +1,18 @@
-from pyspark.sql.functions import lit, current_timestamp
 from datetime import datetime
+
+from pyspark.sql.functions import current_timestamp, lit
 
 # Input (raw files in bronze volume) and Output (Delta tables) paths
 input_path = "/Volumes/weather_data/default/raw/"
 bronze_json_path = "/Volumes/weather_data/default/jason/"
 bronze_csv_path = "/Volumes/weather_data/default/csv/"
 
+
 # Logging utility
 def log_message(message):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"[{timestamp}] {message}")
+
 
 try:
     files = dbutils.fs.ls(input_path)
@@ -19,7 +22,7 @@ except Exception as e:
     raise e
 
 # Check if json files exist
-json_files = [f for f in files if f.name.endswith('.json')]
+json_files = [f for f in files if f.name.endswith(".json")]
 if len(json_files) == 0:
     log_message("No JSON files found")
     json_exists = False
@@ -28,7 +31,7 @@ else:
     json_exists = True
 
 # Check if csv files exist
-csv_files = [f for f in files if f.name.endswith('.csv')]
+csv_files = [f for f in files if f.name.endswith(".csv")]
 if len(csv_files) == 0:
     log_message("No CSV files found")
     csv_exists = False
@@ -41,14 +44,14 @@ if json_exists:
     try:
         df_json = spark.read.option("multiline", "true").json(f"{input_path}*.json")
         log_message("Raw JSON files loaded successfully.")
-        log_message(f"JSON schema:")
+        log_message("JSON schema:")
         df_json.printSchema()
 
         # Add metadata columns
         df_json = (
             df_json.withColumn("source", lit("open-meteo"))
-                   .withColumn("file_type", lit("json"))
-                   .withColumn("ingestion_time", current_timestamp())
+            .withColumn("file_type", lit("json"))
+            .withColumn("ingestion_time", current_timestamp())
         )
 
         # Save as Delta Table (Bronze Layer - JSON)
@@ -63,16 +66,20 @@ else:
 # Process CSV files to Delta table
 if csv_exists:
     try:
-        df_csv = spark.read.option("header", "true").option("inferSchema", "true").csv(f"{input_path}*.csv")
+        df_csv = (
+            spark.read.option("header", "true")
+            .option("inferSchema", "true")
+            .csv(f"{input_path}*.csv")
+        )
         log_message("Raw CSV files loaded successfully.")
-        log_message(f"CSV schema:")
+        log_message("CSV schema:")
         df_csv.printSchema()
 
         # Add metadata columns
         df_csv = (
             df_csv.withColumn("source", lit("greece-mobility"))
-                  .withColumn("file_type", lit("csv"))
-                  .withColumn("ingestion_time", current_timestamp())
+            .withColumn("file_type", lit("csv"))
+            .withColumn("ingestion_time", current_timestamp())
         )
 
         # Save as Delta Table (Bronze Layer - CSV)

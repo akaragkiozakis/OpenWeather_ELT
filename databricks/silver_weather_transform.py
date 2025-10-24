@@ -1,6 +1,13 @@
-from pyspark.sql.functions import col, explode, to_timestamp, regexp_replace, count, when, arrays_zip
-from pyspark.sql.types import StringType, DoubleType, LongType, DateType, TimestampType
 from datetime import datetime
+
+from pyspark.sql.functions import (
+    arrays_zip,
+    col,
+    count,
+    explode,
+    when,
+)
+from pyspark.sql.types import DateType, DoubleType, TimestampType
 
 # Paths
 input_json_path = "/Volumes/weather_data/default/jason/"
@@ -12,10 +19,12 @@ mobility_silver_path = "/Volumes/weather_data/silver2/mobility_silver/"
 converted_df = None
 clean_df = None
 
+
 # Logger
 def log_message(message):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"[{timestamp}] {message}")
+
 
 # Check if JSON volume exists
 try:
@@ -43,7 +52,7 @@ if jason_volume_exists:
         # Load Bronze Delta table
         weather_data = spark.read.format("delta").load(input_json_path)
         log_message("🌤 JSON data loaded successfully.")
-        
+
         log_message("🔍 JSON data schema:")
         weather_data.printSchema()
 
@@ -56,13 +65,13 @@ if jason_volume_exists:
                     col("daily.temperature_2m_min"),
                     col("daily.precipitation_sum"),
                     col("daily.snowfall_sum"),
-                    col("daily.wind_speed_10m_max")
+                    col("daily.wind_speed_10m_max"),
                 )
             ).alias("weather_record"),
             col("latitude"),
             col("longitude"),
             col("source"),
-            col("ingestion_time")
+            col("ingestion_time"),
         )
 
         log_message("✅ Data exploded successfully.")
@@ -78,7 +87,7 @@ if jason_volume_exists:
             col("latitude"),
             col("longitude"),
             col("source"),
-            col("ingestion_time")
+            col("ingestion_time"),
         )
 
         log_message("✅ Data flattened successfully.")
@@ -93,7 +102,7 @@ if jason_volume_exists:
             col("temperature_min").cast(DoubleType()).alias("temperature_min"),
             col("precipitation_sum").cast(DoubleType()).alias("precipitation_sum"),
             col("snowfall_sum").cast(DoubleType()).alias("snowfall_sum"),
-            col("wind_speed_max").cast(DoubleType()).alias("wind_speed_max")
+            col("wind_speed_max").cast(DoubleType()).alias("wind_speed_max"),
         )
 
         log_message("✅ Data types converted successfully.")
@@ -102,11 +111,8 @@ if jason_volume_exists:
 
         # Check for null values
         log_message("🔎 Checking for null values in weather data...")
-        null_counts = (
-            converted_df.select([
-                count(when(col(c).isNull(), c)).alias(c)
-                for c in converted_df.columns
-            ])
+        null_counts = converted_df.select(
+            [count(when(col(c).isNull(), c)).alias(c) for c in converted_df.columns]
         )
         display(null_counts)
 
@@ -131,23 +137,20 @@ if csv_volume_exists:
     try:
         mobility_data = spark.read.format("delta").load(input_csv_path)
         log_message("✅ CSV data loaded successfully.")
-        
+
         log_message("🔍 CSV data schema:")
         mobility_data.printSchema()
 
         log_message("🔎 Checking for null values in mobility data...")
-        null_counts = (
-            mobility_data.select([count(when(col(c).isNull(), c)).alias(c) for c in mobility_data.columns])
-        )       
+        null_counts = mobility_data.select(
+            [count(when(col(c).isNull(), c)).alias(c) for c in mobility_data.columns]
+        )
         display(null_counts)
 
         # Clearing null values and dropping unnecessary columns
         clean_df = mobility_data.dropna(subset=["sub_region_1"])
         clean_df = clean_df.drop(
-            "sub_region_2", 
-            "metro_area", 
-            "iso_3166_2_code", 
-            "census_fips_code"
+            "sub_region_2", "metro_area", "iso_3166_2_code", "census_fips_code"
         )
         log_message("✅ Null values cleared and specific columns dropped successfully.")
 
@@ -156,7 +159,9 @@ if csv_volume_exists:
 
         # Record count
         mobility_record_count = clean_df.count()
-        log_message(f"✅ Total mobility records after transformation: {mobility_record_count}")
+        log_message(
+            f"✅ Total mobility records after transformation: {mobility_record_count}"
+        )
 
     except Exception as e:
         log_message(f"❌ Error during CSV Silver transformation: {e}")
@@ -183,27 +188,35 @@ if clean_df is not None:
 if converted_df is not None:
     try:
         converted_df.write.format("delta").mode("overwrite").save(weather_silver_path)
-        log_message(f"✅ Weather Silver Delta table created successfully at: {weather_silver_path}")
-                
+        log_message(
+            f"✅ Weather Silver Delta table created successfully at: {weather_silver_path}"
+        )
+
         silver_verification = spark.read.format("delta").load(weather_silver_path)
         verification_count = silver_verification.count()
-        log_message(f"🔍 Verification: Weather Silver table contains {verification_count} records.")
-                
+        log_message(
+            f"🔍 Verification: Weather Silver table contains {verification_count} records."
+        )
+
     except Exception as e:
         log_message(f"❌ Error saving Weather Silver table: {e}")
 else:
     log_message("⚠️ No weather data to save to Silver layer.")
 
-# Save Mobility (CSV) to Silver        
+# Save Mobility (CSV) to Silver
 if clean_df is not None:
     try:
         clean_df.write.format("delta").mode("overwrite").save(mobility_silver_path)
-        log_message(f"✅ Mobility Silver Delta table created successfully at: {mobility_silver_path}")
+        log_message(
+            f"✅ Mobility Silver Delta table created successfully at: {mobility_silver_path}"
+        )
 
         silver_verification = spark.read.format("delta").load(mobility_silver_path)
         verification_count = silver_verification.count()
-        log_message(f"🔍 Verification: Mobility Silver table contains {verification_count} records.")
-            
+        log_message(
+            f"🔍 Verification: Mobility Silver table contains {verification_count} records."
+        )
+
     except Exception as e:
         log_message(f"❌ Error saving Mobility Silver table: {e}")
 else:
