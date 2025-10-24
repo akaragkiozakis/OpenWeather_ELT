@@ -11,9 +11,14 @@ import great_expectations as ge
 
 
 def log_message(message):
-    """Simple logging function"""
+    """Simple logging function with Unicode support"""
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"[{timestamp}] {message}")
+    try:
+        print(f"[{timestamp}] {message}")
+    except UnicodeEncodeError:
+        # Fallback for Windows console encoding issues
+        safe_message = message.encode('ascii', 'replace').decode('ascii')
+        print(f"[{timestamp}] {safe_message}")
 
 
 def create_sample_weather_data():
@@ -163,9 +168,7 @@ def print_test_results(test_name, results):
             passed += 1
 
     log_message("=" * 50)
-    log_message(
-        f"📈 Summary: {passed}/{total} tests passed ({(passed/total)*100:.1f}%)"
-    )
+    log_message(f"📈 Summary: {passed}/{total} tests passed ({(passed/total)*100:.1f}%)")
 
     return passed == total
 
