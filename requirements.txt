@@ -4,15 +4,15 @@ pandas==2.0.3
 requests==2.31.0
 
 # Data Quality and Testing  
-great-expectations==0.15.50
+great-expectations==0.18.19
 pytest==7.4.0
 
 # Database Connectors
-snowflake-connector-python==3.0.4
-snowflake-sqlalchemy==1.4.7
+snowflake-connector-python==3.12.0
+snowflake-sqlalchemy==1.6.1
 
 # Visualization and Reporting
-apache-superset==3.1.0
+# apache-superset==3.1.0  # Temporarily disabled due to complex dependencies
 
 # Development and Utilities
 python-dotenv==1.0.0
