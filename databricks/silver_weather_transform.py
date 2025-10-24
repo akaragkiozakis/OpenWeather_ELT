@@ -1,12 +1,6 @@
 from datetime import datetime
 
-from pyspark.sql.functions import (
-    arrays_zip,
-    col,
-    count,
-    explode,
-    when,
-)
+from pyspark.sql.functions import arrays_zip, col, count, explode, when
 from pyspark.sql.types import DateType, DoubleType, TimestampType
 
 # Paths
