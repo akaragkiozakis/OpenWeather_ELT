@@ -17,7 +17,7 @@ def log_message(message):
         print(f"[{timestamp}] {message}")
     except UnicodeEncodeError:
         # Fallback for Windows console encoding issues
-        safe_message = message.encode('ascii', 'replace').decode('ascii')
+        safe_message = message.encode("ascii", "replace").decode("ascii")
         print(f"[{timestamp}] {safe_message}")
 
 
@@ -168,7 +168,9 @@ def print_test_results(test_name, results):
             passed += 1
 
     log_message("=" * 50)
-    log_message(f"📈 Summary: {passed}/{total} tests passed ({(passed/total)*100:.1f}%)")
+    log_message(
+        f"📈 Summary: {passed}/{total} tests passed ({(passed/total)*100:.1f}%)"
+    )
 
     return passed == total
 

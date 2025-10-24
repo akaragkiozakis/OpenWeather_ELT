@@ -20,7 +20,7 @@ def log_message(message):
         print(f"[{timestamp}] {message}")
     except UnicodeEncodeError:
         # Fallback for Windows console encoding issues
-        safe_message = message.encode('ascii', 'replace').decode('ascii')
+        safe_message = message.encode("ascii", "replace").decode("ascii")
         print(f"[{timestamp}] {safe_message}")
 
 
