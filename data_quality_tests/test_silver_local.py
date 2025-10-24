@@ -215,9 +215,7 @@ def print_test_results(test_name, results):
             passed += 1
 
     log_message("=" * 60)
-    log_message(
-        f"📈 Summary: {passed}/{total} tests passed ({(passed/total)*100:.1f}%)"
-    )
+    log_message(f"📈 Summary: {passed}/{total} tests passed ({(passed/total)*100:.1f}%)")
 
     return passed == total
 
