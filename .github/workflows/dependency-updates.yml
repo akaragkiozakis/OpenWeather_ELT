@@ -1,0 +1,98 @@
+name: 🔄 Dependency Updates
+
+on:
+  schedule:
+    - cron: '0 8 * * 1'  # Every Monday at 8 AM UTC
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  # ==========================================
+  # JOB 1: Check for Updates
+  # ==========================================
+  check-updates:
+    name: 🔍 Check Dependency Updates
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+      
+    - name: 🐍 Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    - name: 🔍 Check for Outdated Packages
+      run: |
+        pip install pip-tools
+        pip install -r requirements.txt
+        
+        # Check for outdated packages
+        echo "## 📦 Current Dependencies" > dependency_report.md
+        pip list >> dependency_report.md
+        echo "" >> dependency_report.md
+        
+        echo "## 🔄 Outdated Packages" >> dependency_report.md
+        pip list --outdated >> dependency_report.md || true
+        
+        # Check for security vulnerabilities
+        pip install safety
+        echo "" >> dependency_report.md
+        echo "## 🛡️ Security Vulnerabilities" >> dependency_report.md
+        safety check --output text >> dependency_report.md || true
+        
+    - name: 📤 Upload Dependency Report
+      uses: actions/upload-artifact@v3
+      with:
+        name: dependency-report
+        path: dependency_report.md
+        
+    - name: 📊 Add to Summary
+      run: |
+        echo "## 🔄 Dependency Update Check" >> $GITHUB_STEP_SUMMARY
+        echo "- **Date**: $(date)" >> $GITHUB_STEP_SUMMARY
+        echo "- **Status**: ✅ Completed" >> $GITHUB_STEP_SUMMARY
+        echo "- **Report**: Available in artifacts" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "📋 **Next Steps**: Review the dependency report and create update PRs if needed." >> $GITHUB_STEP_SUMMARY
+
+  # ==========================================
+  # JOB 2: Security Audit
+  # ==========================================
+  security-audit:
+    name: 🛡️ Security Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+      
+    - name: 🐍 Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    - name: 🛡️ Run Security Audit
+      run: |
+        # Install security tools
+        pip install bandit safety pip-audit
+        
+        # Run bandit for code security
+        echo "## 🔍 Bandit Security Scan" > security_report.md
+        bandit -r . -f txt >> security_report.md || true
+        
+        # Run safety for known vulnerabilities
+        echo "" >> security_report.md
+        echo "## 🛡️ Known Vulnerabilities (Safety)" >> security_report.md
+        safety check --output text >> security_report.md || true
+        
+        # Run pip-audit
+        echo "" >> security_report.md
+        echo "## 🔍 Pip Audit" >> security_report.md
+        pip-audit >> security_report.md || true
+        
+    - name: 📤 Upload Security Report
+      uses: actions/upload-artifact@v3
+      with:
+        name: security-report
+        path: security_report.md

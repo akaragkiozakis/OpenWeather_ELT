@@ -160,8 +160,10 @@ Thumbs.db
 
 # Great Expectations
 great_expectations/uncommitted/
-great_expectations/plugins/
-great_expectations/.ge_store_backend_id
+# Keep the main configuration files but exclude generated content
+!great_expectations/great_expectations.yml
+!great_expectations/expectations/
+!great_expectations/checkpoints/
 
 # Databricks
 .databricks/
