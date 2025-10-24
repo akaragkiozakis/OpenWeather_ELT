@@ -42,7 +42,7 @@ jobs:
         safety check --output text >> dependency_report.md || true
         
     - name: 📤 Upload Dependency Report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: dependency-report
         path: dependency_report.md
@@ -92,7 +92,7 @@ jobs:
         pip-audit >> security_report.md || true
         
     - name: 📤 Upload Security Report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: security-report
         path: security_report.md
